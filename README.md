@@ -176,8 +176,24 @@ Methods for building gene trees
 
             standard-RAxML/raxmlHPC-PTHREADS -T $1 -n <tree file name> -f t -p <random 5 digit number> -N 100 -m PROTGAMMAJTT -s <alignment file> -t <guide tree>
             
-      After this runs, you get 100 separate trees. Trees need to combined to form a consensus tree:
+      After this runs, you get 100 separate trees. Trees need to combined to form a consensus tree. The next steps can all be done on your computer.
+      First concatenate all output trees into one file:
       
+            cat RAxML_output_tree* > all_trees_file
+            
+      Next use RAxML to combine the all_trees_file:
+      
+            standard-RAxML/raxmlHPC-PTHREADS -n <consensus tree file name> -J MRE -m PROTGAMMAJTT -z <all_trees_file> -T 2 -N 100 
+            
+      Re-evaluate consensus tree to get branch lengths:
+      
+            standard-RAxML/raxmlHPC-PTHREADS -T 2 -n <output file name> -f e -m PROTGAMMAJTT -s <alignment file> -t <ConsensusTree>
+            
+      Add back in bootstrap values:
+      
+            standard-RAxML/raxmlHPC-PTHREADS -T 2 -n <output file name> -f b -m PROTGAMMAJTT -t <evaluated ConsensusTree> -z <all_trees_file>
+      
+            
             
 
    
