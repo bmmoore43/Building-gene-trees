@@ -88,9 +88,98 @@ Methods for building gene trees
             
    3. Fasttree output is in Newick format. Check tree for very close/ overlapping leaves of the same species as well as leaves that are very long. Very close leaves may indicate sequence duplicates (these are likely due to sequencing errors and not actual duplicates), or multiple fragmented sequences of the same gene. Very long leaves could indicate very divergent sequences or genes that are perhaps not orthologous.
    
+   d. Run filter fasta- this script removes duplicate genes and genes shorter than 3x standard deviation from the mean- or a given length (input from the user)
    
+            python filter_fasta.py -fasta <fasta file> 
+            
+            other options: -dir <directory of fasta files> -bp <genes you want to remove that are shorter than this length- an interger> -save <output file name>
+            
+  e. Rerun alignment and fasttree with new filtered fasta. Recheck tree in Dendroscope, compare to previous. If genes still stick out then check the alignment. Use Sequence Manipulation Suite (SMS) https://www.bioinformatics.org/sms2/ and the color align program to check your fasta file for weird genes.
    
+4. Running tree using RAxML on CHTC. For this step you will need a CHTC account. You will also need to download the raxml script to the chtc.
+   Find latest RAxML download: https://github.com/stamatak/standard-RAxML
+
+  a. Transfer alignment file to chtc. Note you may be on a different submit server, use the address of your account.
+  
+            scp <file name> username@submit2.chtc.wisc.edu:
+            
+  b. Set up submit file: This file tells chtc how to run your job.
+  
+  1. Create the submit file:
+  
+            nano raxml_job.sub
+            
+  2. Add options. Be sure to put in your alignment files as input. Example submit file:
+  
+            # raxml.sub
+            ##
+            # Specify the HTCondor Universe (vanilla is the default and is used
+            #  for almost all jobs), the desired name of the HTCondor log file,
+            #  and the desired name of the standard error file.  
+            #  Wherever you see $(Cluster), HTCondor will insert the queue number
+            #  assigned to this set of jobs at the time of submission.
+            universe = vanilla
+            log = raxmlPTALmono_$(Cluster).log
+            error = raxmlPTALmono_$(Cluster)_$(Process).err
+            output = raxmlPTALmono_$(Cluster)_$(Process).out
+            ##
+            # Specify your executable (single binary or a script that runs several
+            #  commands), arguments, and a files for HTCondor to store standard
+            #  output (or "screen output").
+            #  $(Process) will be a integer number for each job, starting with "0"
+            #  and increasing for the relevant number of jobs.
+            # Here we specify the command raxml.sh and arguments which refer to the number of cpus to use
+            executable = raxml.sh
+            arguments = $(request_cpus)
+            ##
+            # Specify that HTCondor should transfer files to and from the
+            # computer where each job runs. Here we transfer the alignment
+            # file and the raxml program
+            should_transfer_files = YES
+            when_to_transfer_output = ON_EXIT
+            transfer_input_files = alignment_file,standard-RAxML.tar.gz 
+            ##
+            #  Tell HTCondor what amount of compute resources
+            #  each job will need on the computer where it runs.
+            #  For large trees use 16 cpus, smaller trees can use 8 or 4
+            request_cpus = 16
+            request_memory = 2GB
+            request_disk = 1GB
+            ##
+            # If job runs over 72 hours, you will need to specify a Long job:
+            # +LongJob = true
+            ##
+            # Tell HTCondor to run 1 instances of our job:
+            queue 1
+            
+  c. Set up the executable file. This file contains the RAxML command. This can vary based on how you want to run your RAxML job. 
+  
+  1. Example 1: Running RAxML on a protein alignment with specific outgroups:
+  
+           #!/bin/bash
+            tar -xzf standard-RAxML.tar.gz
+
+            standard-RAxML/raxmlHPC-PTHREADS -T $1 -n <tree file name> -f a -x <random 5 digit number> -p <random 5 digit number> -N 100 -m PROTGAMMAJTT -s <alignment file> -o <outgroup_gene1,outgroup_gene2>
+            
+   2. Example 2: Running RAxML on a cds alignment with outgroups:
    
+           #!/bin/bash
+           tar -xzf standard-RAxML.tar.gz
+
+           standard-RAxML/raxmlHPC-PTHREADS -T $1 -n <tree file name> -f a -x <random 5 digit number> -p <random 5 digit number> -N 100 -m GTRGAMMA -s <alignment file> -o <outgroup_gene1,outgroup_gene2>
+           
+   3. Example 3: Running RAxML with guide tree:
+   
+            #!/bin/bash
+            tar -xzf standard-RAxML.tar.gz
+            tar -xzf data.tar.gz
+
+            standard-RAxML/raxmlHPC-PTHREADS -T $1 -n <tree file name> -f t -p <random 5 digit number> -N 100 -m PROTGAMMAJTT -s <alignment file> -t <guide tree>
+            
+      After this runs, you get 100 separate trees. Trees need to combined to form a consensus tree:
+      
+            
+
    
       
            
