@@ -52,4 +52,48 @@ Methods for building gene trees
    
 3. Checking genes with Fasttree and removing duplicates/ fragmented genes.
 
+   a. Install Fasttree (http://www.microbesonline.org/fasttree/)
+   
+   1. Install Fasttree using conda
+      
+           conda install -c bioconda fasttree
+           
+   2. Check installation by running
+   
+           Fasttree
+   
+   This should give you a list of options.
+   
+   b. Align your fasta file using MAFFT
+   
+   1. Check if MAFFT is installed. If not installed, follow previous instructions in https://github.com/HiroshiLab/Building-Gene-Trees-workshop-1
+   
+            which mafft
+            
+   2. Run MAFFT to align fasta
+   
+            mafft --auto --anysymbol [fasta file] > [output]
+            
+   3. Use output alignment file to run Fasttree
+   
+   c. Run Fasttree- this should be relatively fast (seconds to minutes)
+   
+   1. For protein alignments:
+   
+            FastTree alignment.file > tree_file
+            
+   2. For nucleotide alignments:
+   
+            FastTree -gtr -nt alignment_file > tree_file
+            
+   3. Fasttree output is in Newick format. Check tree for very close/ overlapping leaves of the same species as well as leaves that are very long. Very close leaves may indicate sequence duplicates (these are likely due to sequencing errors and not actual duplicates), or multiple fragmented sequences of the same gene. Very long leaves could indicate very divergent sequences or genes that are perhaps not orthologous.
+   
+   
+   
+   
+   
+      
+           
+           
+
   
