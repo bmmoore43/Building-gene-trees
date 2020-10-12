@@ -84,17 +84,33 @@ Methods for building gene trees
             
    2. For nucleotide alignments:
    
-            FastTree -gtr -nt alignment_file > tree_file
+            FastTree -gtr -nt alignment_file > fasttree_file
             
-   3. Fasttree output is in Newick format. Check tree for very close/ overlapping leaves of the same species as well as leaves that are very long. Very close leaves may indicate sequence duplicates (these are likely due to sequencing errors and not actual duplicates), or multiple fragmented sequences of the same gene. Very long leaves could indicate very divergent sequences or genes that are perhaps not orthologous.
+   3. Fasttree output is in Newick format. Check tree using Dendroscope or other tree visualization programs for very close/ overlapping leaves of the same species as well as leaves that are very long. Very close leaves may indicate sequence duplicates (these are likely due to sequencing errors and not actual duplicates), or multiple fragmented sequences of the same gene. Very long leaves could indicate very divergent sequences or genes that are perhaps not orthologous.
    
-   d. Run filter fasta- this script removes duplicate genes and genes shorter than 3x standard deviation from the mean- or a given length (input from the user)
+   d. Run tree shrink to get rid of divergent sequences that are likely not part of the gene family.
+   
+   1. Check if you have python and R. If not they should be installed on your computer.
+            
+            python3 --version
+            
+            R --version
+            
+   2. TreeShrink can be downloaded here: https://github.com/uym2/TreeShrink
+   
+   3. Untar and run tree shrink.
+   
+            tar -xzf TreeShrink.tar.gz
+            
+            python3 TreeShrink/run_treeshrink.py -t fasttree_file
+   
+   e. Run filter fasta- this script removes duplicate genes and genes shorter than 3x standard deviation from the mean- or a given length (input from the user)
    
             python filter_fasta.py -fasta <fasta file> 
             
             other options: -dir <directory of fasta files> -bp <genes you want to remove that are shorter than this length- an interger> -save <output file name>
             
-  e. Rerun alignment and fasttree with new filtered fasta. Recheck tree in Dendroscope, compare to previous. If genes still stick out then check the alignment. Use Sequence Manipulation Suite (SMS) https://www.bioinformatics.org/sms2/ and the color align program to check your fasta file for weird genes.
+  f. Rerun alignment and fasttree with new filtered fasta. Recheck tree in Dendroscope, compare to previous. If genes still stick out then check the alignment. Use Sequence Manipulation Suite (SMS) https://www.bioinformatics.org/sms2/ and the color align program to check your fasta file for weird genes.
    
 4. Running tree using RAxML on CHTC. For this step you will need a CHTC account. You will also need to download the raxml script to the chtc.
    Find latest RAxML download: https://github.com/stamatak/standard-RAxML
