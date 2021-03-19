@@ -108,7 +108,7 @@ Methods for building gene trees
    
             python filter_fasta.py -fasta <fasta file> 
             
-            other options: -dir <directory of fasta files> -bp <genes you want to remove that are shorter than this length- an interger> -save <output file name>
+            other options: -dir <directory of fasta files> -bp <genes you want to remove that are shorter than this length- an interger> -stdv <number of standard deviations for cutoff- both length over and under> -save <output file name>
             
   f. Rerun alignment and fasttree with new filtered fasta. Recheck tree in Dendroscope, compare to previous. If genes still stick out then check the alignment. Use Sequence Manipulation Suite (SMS) https://www.bioinformatics.org/sms2/ and the color align program to check your fasta file for weird genes.
    
