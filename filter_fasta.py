@@ -7,6 +7,7 @@ INPUT:
 	-dir Directory with all fasta files - looks for .fa or .fasta
 	-bp number (integer) of basepairs or amino acid sequences. Below this number and gene is skipped.
 		default is 3x standard deviations shorter than mean of sequence length
+	-stdv number (integer) of std deviations from mean length that you want to remove genes. Above and below this length gene is removed
 
 OPTIONAL:
 	-save output file name
@@ -28,6 +29,7 @@ start = timeit.default_timer()
 startdir="none"
 fa_file="none"
 bp="stddev"
+STDEV=''
 
 for i in range (1,len(sys.argv),2):
 
@@ -37,7 +39,9 @@ for i in range (1,len(sys.argv),2):
     fa_file = sys.argv[i+1]
     SAVE = str(fa_file)+"_parsed.fa"
   if sys.argv[i] ==  '-bp':
-    bp = fa_file = sys.argv[i+1]
+    bp = sys.argv[i+1]
+  if sys.argv[i] == '-stdv':
+    STDEV= int(sys.argv[i+1])
   if sys.argv[i] == '-save':         #output name
     SAVE = sys.argv[i+1]
 
@@ -86,7 +90,7 @@ def read_fasta(fasta, D):
 	return D
 
 ## get standard deviation function
-def get_std(D):
+def get_std(D, z):
 	from scipy import stats
 	data = list(D.values())
 	data2= [item[1] for item in data]
@@ -96,21 +100,48 @@ def get_std(D):
 	print('stdev of gene lengths: ', std)
 	mn= stats.tmean(x_array)
 	print("mean of gene lengths: ", mn)
-	x= mn-3*std
-	print("cutoff mean-3*std: ", x)
-	return x
+	x= mn-z*std
+	y= mn+z*std
+	if x < 0:
+		print('z*stdev is greater than mean. Trying stdev*mean only.')
+		x=mn-std
+		if x < 0:
+			print("stdev is greater than mean, try giving bp cutoff")
+			x='NA'
+	print("cutoff mean-/+z*std: ", x,y)
+	return x,y
 
 ## remove duplicate genes
 def remove_dups(D):
-	temp = [] 
+	temp = []
+	list1=[] 
 	list2 = []
 	res = dict() 
 	for key, val in D.items(): 
-		if val[0] not in temp: 
-			temp.append(val[0]) 
-			res[key] = val
+		if val[0] not in temp:  # get only unique sequences
+			temp.append(val[0]) # sequence list of unique sequences
+			list1.append(key) # gene list of unique sequences
 		else:
+			list2.append(key) # gene list of redundant sequences
+# remove partial dups and get longest sequence
+	for key in list1: # for gene in unique sequences
+		val= D[key] # get sequence
+		part_dup=[]
+		for t in temp: # for seq in sequence list
+			if val[0] in t: # if gene seq is in seq
+				#print(val[0],t)
+				part_dup.append(t) # append as partial duplicate to duplicate seq list
+			else:
+				if val[0] not in part_dup:
+					part_dup.append(val[0]) # include gene sequence here
+		# Longest String in list 
+		# using max() + key 
+		string = max(part_dup, key = len) # find the longest sequence from duplicate seq list
+		if string == val[0]: # if this longest seq is your gene, keep
+			res[key]=val
+		else: # else do not add to result, add to remove list
 			list2.append(key)
+			
 	return res, list2
 
 
@@ -131,22 +162,33 @@ else:
 	
 print("number of genes in fasta:", len(fasta_D))
 
-x= get_std(fasta_D)
+if STDEV != '':
+	x,y= get_std(fasta_D,STDEV)
+else:
+	x,y= get_std(fasta_D,3)
 ## 
 ## filter fasta and write output
 output= open(SAVE,"w")
 fasta_D, list2= remove_dups(fasta_D)
 print("number of genes in fasta after dups removed:", len(fasta_D))
-print("genes removed", list2)
+print("duplicate/ partial duplicate genes removed", list2)
 for gene in fasta_D:
 	dataall=fasta_D[gene]
 	seq= dataall[0]
 	length= dataall[1]
 	if bp == 'stddev':
-		if int(length) < float(x):
-			print(gene, " removed because too short, less than ", x)
+		if x != 'NA':
+			if int(length) < float(x):
+				print(gene, " removed because too short, less than ", x)
+			elif int(length) > float(y):
+				print(gene, " removed because too long, more than ", y)
+			else:
+				output.write('>%s\n%s\n' % (gene, seq))
 		else:
-			output.write('>%s\n%s\n' % (gene, seq))
+			if int(length) > float(y):
+				print(gene, " removed because too long, more than ", y)
+			else:
+				output.write('>%s\n%s\n' % (gene, seq))
 	else:
 		if int(length) < float(bp):
 			print(gene, " removed because too short, less than ", bp)
