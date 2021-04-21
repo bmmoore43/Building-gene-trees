@@ -132,93 +132,92 @@ Methods for building gene trees
 (needs alignment file)
 5. Finding the best evolutionary model using ModelTest (https://github.com/ddarriba/modeltest). The evolutionary model affects how your tree is built because it determines the rate in which nucleotides or amino acids are substituted, and the frequency in which they occur- thus affecting branch length, distances, and likelihood of a tree. The best evolutionary model can vary across enzyme families and is dependent on what taxa are included.
    
-   a. install modeltest using git
+  a. install modeltest using git
    
-     i. clone modeltest repository
+   i. clone modeltest repository
 
                git clone https://github.com/ddarriba/modeltest
             
-     ii. install dependencies
+   ii. install dependencies
       
-     for PC or Debian-based systems:
+   for PC or Debian-based systems:
       
                sudo apt-get install flex bison
             
-     for mac:
+   for mac:
       
-     First make sure homebrew (https://brew.sh/) is installed. Try:
+   First make sure homebrew (https://brew.sh/) is installed. Try:
       
              brew
             
-     if you get a list of commands using brew, then it is installed. 
+   if you get a list of commands using brew, then it is installed. 
       
-     if not found, then install
+   if not found, then install
       
                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       
-     Get dependencies using brew:
+   Get dependencies using brew:
       
                brew install flex bison
             
-     iii. build
+  b. build
+   Need to install cmake if you don't have it: https://cmake.org/install/
       
-     Need to install cmake if you don't have it: https://cmake.org/install/
+   for mac download: cmake-3.20.0-macos-universal.tar.gz
       
-     for mac download: cmake-3.20.0-macos-universal.tar.gz
-      
-     untar:
+   untar:
       
                tar -xvzf cmake-3.20.0-macos-universal.tar.gz
             
-     in modeltest folder make build folder and go to build 
+   in modeltest folder make build folder and go to build 
 
                mkdir build && cd build
             
-     call cmake from wherever it was downloaded
+   call cmake from wherever it was downloaded
      
                ~/Desktop/Github/cmake-3.20.0-macos-universal/CMake.app/Contents/bin/cmake ..
             
-     Now make
+   Now make
      
                make
             
-     Result: Linking CXX executable. Modeltest-ng should be in bin folder within Github folder
+   Result: Linking CXX executable. Modeltest-ng should be in bin folder within Github folder
      
                /Users/Beth/Desktop/Github/modeltest/bin/modeltest-ng
             
-     iv. Run
+  c. Run locally
      
-     To see input options: https://github.com/ddarriba/modeltest/wiki/Command-line
+   To see input options: https://github.com/ddarriba/modeltest/wiki/Command-line
      
-     Try on example data (this can be found within Github folder):
+   Try on example data (this can be found within Github folder):
      
                ./bin/modeltest−ng −i example−data/dna/tiny.fas -t ml
            
-     On amino acid data: -i <alignment file> -d <indicates data type: aa= amino acid> -p <number of cpus to use> -t <type of tree to build for each model: ml= max. likelihood>
+   On amino acid data: -i <alignment file> -d <indicates data type: aa= amino acid> -p <number of cpus to use> -t <type of tree to build for each model: ml= max. likelihood>
      
                /Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -p 2
 
-     Check only specific model types (add -m)
+   Check only specific model types (add -m)
      
                Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -m JTT,JTT-DCMUT -p 2
 
-     Output will be best model type for your data. See raxml-ng command line in output.
+   Output will be best model type for your data. See raxml-ng command line in output.
       
-     v. Run on chtc
+  d. Run on chtc
       
-     Download modeltest_install.tar.gz from this Github repository. Note this install is only for CHTC!
+   Download modeltest_install.tar.gz from this Github repository. Note this install is only for CHTC!
       
-     Set up run:
+   Set up run:
       
-     Sub file:
+   Sub file:
       
             modeltest_loop.sub or modeltest1.sub
 
-     sh file:
+   sh file:
       
             modeltest.sh or modeltest1.sh
            
-     for each file, you will need to change the input files to reflect your alignment.                         
+   for each file, you will need to change the input files to reflect your alignment.                         
 
 ## RAXML-ng 
 (needs alignment file and model test result)  
