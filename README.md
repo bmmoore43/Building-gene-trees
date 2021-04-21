@@ -134,39 +134,39 @@ Methods for building gene trees
    
    a. install modeltest using git
    
-      i.	clone modeltest repository
+     i. clone modeltest repository
 
                git clone https://github.com/ddarriba/modeltest
             
-      ii. install dependencies
+     ii. install dependencies
       
-      for PC or Debian-based systems:
+     for PC or Debian-based systems:
       
                sudo apt-get install flex bison
             
-      for mac:
+     for mac:
       
-      First make sure homebrew (https://brew.sh/) is installed. Try:
+     First make sure homebrew (https://brew.sh/) is installed. Try:
       
              brew
             
-      if you get a list of commands using brew, then it is installed. 
+     if you get a list of commands using brew, then it is installed. 
       
-      if not found, then install
+     if not found, then install
       
                /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       
-      Get dependencies using brew:
+     Get dependencies using brew:
       
                brew install flex bison
             
-      iii. build
+     iii. build
       
-      Need to install cmake if you don't have it: https://cmake.org/install/
+     Need to install cmake if you don't have it: https://cmake.org/install/
       
-      for mac download: cmake-3.20.0-macos-universal.tar.gz
+     for mac download: cmake-3.20.0-macos-universal.tar.gz
       
-      untar:
+     untar:
       
                tar -xvzf cmake-3.20.0-macos-universal.tar.gz
             
@@ -202,19 +202,19 @@ Methods for building gene trees
      
                Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -m JTT,JTT-DCMUT -p 2
 
-      Output will be best model type for your data. See raxml-ng command line in output.
+     Output will be best model type for your data. See raxml-ng command line in output.
       
-      v. Run on chtc
+     v. Run on chtc
       
-      Download modeltest_install.tar.gz from this Github repository. Note this install is only for CHTC!
+     Download modeltest_install.tar.gz from this Github repository. Note this install is only for CHTC!
       
-      Set up run:
+     Set up run:
       
-      Sub file:
+     Sub file:
       
             modeltest_loop.sub or modeltest1.sub
 
-      sh file:
+     sh file:
       
             modeltest.sh or modeltest1.sh
            
