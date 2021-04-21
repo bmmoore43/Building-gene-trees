@@ -1,0 +1,23 @@
+# modeltest_loop.sub
+###
+universe = vanilla
+log = modeltest_$(Cluster)_CYP75A.log
+error = modeltest_$(Cluster)_CYP75A.err
+output = modeltest_$(Cluster)_CYP75A.out
+#
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_input_files = CYP75A_MAr05_monocot_OG0000074.fa_filter.fa.aln,modeltest_install.tar.gz
+#
+executable = modeltest1.sh
+#
+# arguments = $(df)
+#
+request_cpus = 16
+request_memory = 10GB
+request_disk = 3GB
+getenv=true
++LongJob = true
+#
+#queue df from aln_list2.txt
+queue 1
