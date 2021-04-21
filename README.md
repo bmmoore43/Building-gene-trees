@@ -40,7 +40,7 @@ Methods for building gene trees
         
           OrthoFinder/orthofinder -f my_fasta_files/
           
-    4. Orthofinder can be run from different steps. If your run does not complete, but has run partially, you can try restarting from different steps (see https://github.com/davidemms/OrthoFinder).
+    4. Orthofinder can be run from different steps. If your run does not complete, but has run partially, you can try restarting from different steps.
      
        To restart after BLASTs complete: ('previous_orthofinder_directory' is the OrthoFinder 'WorkingDirectory/' containing the file 'SpeciesIDs.txt'.)
         
@@ -48,9 +48,11 @@ Methods for building gene trees
           
     5. Result files needed:
     
-       You should get a list of orthogroups and the genes they contain in **Orthogroups.tsv**. Search for your gene in this file and then all the genes in its orthogroups would be the gene's homologs. You can also check out the tutorial for looking at results: https://davidemms.github.io/orthofinder_tutorials/exploring-orthofinders-results.html
+       You should get a list of orthogroups and the genes they contain in **Orthogroups/Orthogroups.txt**. Search for your gene in this file and then all the genes in its orthogroups would be the gene's homologs. The Orthofinder tree for your Orthogroup can be found in **Resolved_Gene_Trees/**. This tree can be used as a guide tree for building your maximum likelihood tree later on, or can just be visualized using FigTree or Dendroscope to find outgroups.
+       
+       You can also check out the tutorial for looking at results: https://davidemms.github.io/orthofinder_tutorials/exploring-orthofinders-results.html.
    
-3. Checking genes with Fasttree and removing duplicates/ fragmented genes.
+3. Checking genes with Fasttree. FastTree infers approximately-maximum-likelihood phylogenetic trees from alignments of nucleotide or protein sequences. If you want to get a guide tree from your alignment or just want to get a fast tree, this is a good program for getting approximate ML phylogenetic trees.
 
    a. Install Fasttree (http://www.microbesonline.org/fasttree/)
    
@@ -104,18 +106,118 @@ Methods for building gene trees
             
             python3 TreeShrink/run_treeshrink.py -t fasttree_file
    
-   e. Run filter fasta- this script removes duplicate genes and genes shorter than 3x standard deviation from the mean- or a given length (input from the user)
+4. Filter your fasta file to get rid of duplicates, partial duplicates, or genes of spurious length.
+
+   1. Run filter fasta- this script removes duplicate genes and genes shorter than 3x standard deviation from the mean- or a given length (input from the user)
    
             python filter_fasta.py -fasta <fasta file> 
             
             other options: -dir <directory of fasta files> -bp <genes you want to remove that are shorter than this length- an interger> -stdv <number of standard deviations for cutoff- both length over and under> -save <output file name>
             
-  f. Rerun alignment and fasttree with new filtered fasta. Recheck tree in Dendroscope, compare to previous. If genes still stick out then check the alignment. Use Sequence Manipulation Suite (SMS) https://www.bioinformatics.org/sms2/ and the color align program to check your fasta file for weird genes.
-   
-4. Running tree using RAxML on CHTC. For this step you will need a CHTC account. You will also need to download the raxml script to the chtc.
-   Find latest RAxML download: https://github.com/stamatak/standard-RAxML
+     if you run on a directory, filter_fasta.py looks for files that end in .fa or .fasta. Script will also ouput a "filtered_count_matrix.txt" that gives the post-filtered gene count of each species for each fasta file.
+     
+            python filter_fasta.py -dir <directory> -bp [or] -stdv
+            
+  2. Rerun alignment and fasttree with new filtered fasta. Recheck tree in Dendroscope, compare to previous. If genes still stick out then check the alignment. Use Sequence Manipulation Suite (SMS) https://www.bioinformatics.org/sms2/ and the color align program to check your fasta file for weird genes.
 
-  a. Transfer alignment file to chtc. Note you may be on a different submit server, use the address of your account.
+   For many fastas, you can rerun alignment in a loop:
+   
+            for i in *filter.fa; do echo $i; name="${i}"; file_output="${name}.aln"; echo ${file_output}; mafft --auto --anysymbol $i > ${file_output}; done
+
+5. Finding the best evolutionary model using ModelTest (https://github.com/ddarriba/modeltest). The evolutionary model affects how your tree is built because it determines the rate in which nucleotides or amino acids are substituted, and the frequency in which they occur- thus affecting branch length, distances, and likelihood of a tree. The best evolutionary model can vary across enzyme families and is dependent on what taxa are included.
+   
+   a. install modeltest using git
+   
+      i.	clone modeltest repository
+
+            git clone https://github.com/ddarriba/modeltest
+            
+      ii. install dependencies
+      
+      for PC or Debian-based systems:
+      
+            sudo apt-get install flex bison
+            
+      for mac:
+      
+      First make sure homebrew (https://brew.sh/) is installed. Try:
+      
+            brew
+            
+      if you get a list of commands using brew, then it is installed. 
+      
+      if not found, then install
+      
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      
+      Get dependencies using brew:
+      
+            brew install flex bison
+            
+      iii. build
+      
+      Need to install cmake if you don't have it: https://cmake.org/install/
+      
+      for mac download: cmake-3.20.0-macos-universal.tar.gz
+      
+      untar:
+      
+            tar -xvzf cmake-3.20.0-macos-universal.tar.gz
+            
+     in modeltest folder make build folder and go to build 
+
+            mkdir build && cd build
+            
+     call cmake from wherever it was downloaded
+     
+            ~/Desktop/Github/cmake-3.20.0-macos-universal/CMake.app/Contents/bin/cmake ..
+            
+     Now make
+     
+            make
+            
+     Result: Linking CXX executable. Modeltest-ng should be in bin folder within Github folder
+     
+            /Users/Beth/Desktop/Github/modeltest/bin/modeltest-ng
+            
+     iv. Run
+     
+     To see input options: https://github.com/ddarriba/modeltest/wiki/Command-line
+     
+     Try on example data (this can be found within Github folder):
+     
+           ./bin/modeltest−ng −i example−data/dna/tiny.fas -t ml
+           
+     On amino acid data: -i <alignment file> -d <indicates data type: aa= amino acid> -p <number of cpus to use> -t <type of tree to build for each model: ml= max. likelihood>
+     
+            /Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -p 2
+
+     Check only specific model types (add -m)
+     
+            Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -m JTT,JTT-DCMUT -p 2
+
+      v. Run on chtc
+      
+      Downlaod modeltest_install.tar.gz from Beth
+      
+      Set up run:
+      
+      Sub file:
+      
+           modeltest_loop.sub or modeltest1.sub
+
+      sh file:
+      
+           modeltest.sh or modeltest1.sh
+      
+      
+6. Setting up and running raxml-ng locally.
+
+   
+
+7. Running tree using RAxML-ng on CHTC. For this step you will need a CHTC account. You will also need to download the raxml script to the chtc.
+   
+   a. Transfer alignment file to chtc. Note you may be on a different submit server, use the address of your account.
   
             scp <file name> username@submit2.chtc.wisc.edu:
             
@@ -169,6 +271,13 @@ Methods for building gene trees
             queue 1
             
   c. Set up the executable file. This file contains the RAxML command. This can vary based on how you want to run your RAxML job. 
+   
+   
+   
+8. Running old version of standard RAxML:   
+Find latest RAxML download: https://github.com/stamatak/standard-RAxML
+
+  
   
   1. Example 1: Running RAxML on a protein alignment with specific outgroups:
   
