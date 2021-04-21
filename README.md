@@ -136,29 +136,29 @@ Methods for building gene trees
    
       i.	clone modeltest repository
 
-            git clone https://github.com/ddarriba/modeltest
+               git clone https://github.com/ddarriba/modeltest
             
       ii. install dependencies
       
       for PC or Debian-based systems:
       
-            sudo apt-get install flex bison
+               sudo apt-get install flex bison
             
       for mac:
       
       First make sure homebrew (https://brew.sh/) is installed. Try:
       
-            brew
+             brew
             
       if you get a list of commands using brew, then it is installed. 
       
       if not found, then install
       
-            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+               /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       
       Get dependencies using brew:
       
-            brew install flex bison
+               brew install flex bison
             
       iii. build
       
@@ -168,23 +168,23 @@ Methods for building gene trees
       
       untar:
       
-            tar -xvzf cmake-3.20.0-macos-universal.tar.gz
+               tar -xvzf cmake-3.20.0-macos-universal.tar.gz
             
      in modeltest folder make build folder and go to build 
 
-            mkdir build && cd build
+               mkdir build && cd build
             
      call cmake from wherever it was downloaded
      
-            ~/Desktop/Github/cmake-3.20.0-macos-universal/CMake.app/Contents/bin/cmake ..
+               ~/Desktop/Github/cmake-3.20.0-macos-universal/CMake.app/Contents/bin/cmake ..
             
      Now make
      
-            make
+               make
             
      Result: Linking CXX executable. Modeltest-ng should be in bin folder within Github folder
      
-            /Users/Beth/Desktop/Github/modeltest/bin/modeltest-ng
+               /Users/Beth/Desktop/Github/modeltest/bin/modeltest-ng
             
      iv. Run
      
@@ -192,15 +192,15 @@ Methods for building gene trees
      
      Try on example data (this can be found within Github folder):
      
-           ./bin/modeltest−ng −i example−data/dna/tiny.fas -t ml
+               ./bin/modeltest−ng −i example−data/dna/tiny.fas -t ml
            
      On amino acid data: -i <alignment file> -d <indicates data type: aa= amino acid> -p <number of cpus to use> -t <type of tree to build for each model: ml= max. likelihood>
      
-            /Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -p 2
+               /Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -p 2
 
      Check only specific model types (add -m)
      
-            Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -m JTT,JTT-DCMUT -p 2
+               Github/modeltest/bin/modeltest-ng -i <aln_file> -t ml -d aa -m JTT,JTT-DCMUT -p 2
 
       Output will be best model type for your data. See raxml-ng command line in output.
       
@@ -212,11 +212,11 @@ Methods for building gene trees
       
       Sub file:
       
-           modeltest_loop.sub or modeltest1.sub
+            modeltest_loop.sub or modeltest1.sub
 
       sh file:
       
-           modeltest.sh or modeltest1.sh
+            modeltest.sh or modeltest1.sh
            
      for each file, you will need to change the input files to reflect your alignment.                         
 
