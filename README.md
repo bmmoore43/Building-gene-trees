@@ -345,19 +345,14 @@ Methods for building gene trees
     
          sed -i -e 's/>//g' alignment_file.aln_genelist.txt
          
-    iii. open alignment_file.aln_genelist.txt, add header and type for each gene (ie 50bp_filter)
+    iii. use new genelist.txt file to find which genes to remove from the tree from the original file
     
-         gene	type
-         Acamev11050170m	filtered_50bp
-         Acamev11004816m	filtered_50bp
-         Acamev11046066m	filtered_50bp
-         Acamev11008810m	filtered_50bp
+         python genes2remove.py -oldgenes <original gene list file> -newgenes <new gene list file i.e. *_genelist.txt>
          
-     iv. combine alignment_file.aln_genelist.txt with original gene list of genes in orthogroup to get list of genes that are not present in alignment file
-     
-         python combine_dataframes_pd.py -df1 original_genelist.txt -df2 alignment_file.aln_genelist.txt -type o
+         options: HEADER=T/F
+         T if original gene file has a header, F if it does not. New gene file should not have header.
          
-     v. make list of those that do not overlap in separate file (genes2remove.txt)
+         result: *genelist.txt_genes2remove.txt file
      
      vi. Input genes2remove.txt and resolved gene tree file into R script: **prune_tree.R** to remove them. Note: names must be exactly the same.. even capitalisation in order to remove. Output is modified gene tree you can use as input to RAxML.
 
