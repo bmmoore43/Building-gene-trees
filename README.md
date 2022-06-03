@@ -243,7 +243,7 @@ Methods for building gene trees
    5. Run while environment is activated:
 
             conda activate Raxml-ng
-            Raxml-ng/bin/raxml-ng --msa <alignment_file> --model JTT+G4+F+I --prefix <save_file> --format fasta --threads 16 --seed 210402 --tree pars{10},rand{10}, <user tree> --all --bs-metric fbp,tbe --bs-trees 200 --outgroup <gene1,gene2..> --force perf_threads
+            Raxml-ng/bin/raxml-ng --msa <alignment_file> --model JTT+G4+F+I --prefix <save_file> --threads 16 --seed 210402 --tree pars{10},rand{10}, <user tree> --all --bs-metric fbp,tbe --bs-trees 200 --outgroup <gene1,gene2..> --force perf_threads
             
       Specifies alignment (--msa), model type (--model), output name (--prefix), msa format (--format), cpus to use (--threads), random seed number (--seed), starting trees (--tree), combined tree search and bootstrapping analysis (--all), what bootstrapping metric to use (--bs-metric), number of bootstraps (--bs-trees), outgroup (--outgroup), force number of threads (chtc issue) (--force).
 
